@@ -8,7 +8,7 @@ import MapView from "./commponents/MapView";
 
 
 function App() {
-  const branches = useSelector((state) => state.branches.branches);
+  //const branches = useSelector((state) => state.branches.branches);
 
   const [searchResults, setSearchResults] = useState([]);
   const [searchButtonStatus, setSearchButtonStatus] = useState(false);
