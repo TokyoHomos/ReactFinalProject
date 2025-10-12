@@ -7,10 +7,11 @@ import InputAdornment from "@mui/material/InputAdornment";
 import { SearchIcon } from "lucide-react";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchBranches } from "../../BankBranchFinder/store/branchesSlice";
-import BranchCard from "./BranchCard"; // adjust path if needed
-import "../styles/FindBankBranchInputSection.css";
+import BranchCard from "./BranchCard";
 
 export default function FindBankBranchInputSection() {
   const dispatch = useDispatch();
@@ -21,8 +22,6 @@ export default function FindBankBranchInputSection() {
   const [selectedBank, setSelectedBank] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [location, setLocation] = useState(null);
-
 
   useEffect(() => {
     dispatch(fetchBranches());
@@ -37,9 +36,6 @@ export default function FindBankBranchInputSection() {
     }
   }, [branchesState]);
 
-
-
-  // filter logic
   const filteredBranches = branchesState.filter((branch) => {
     const matchesCity = selectedCity ? branch.City === selectedCity : true;
     const matchesBank = selectedBank ? branch.Bank_Name === selectedBank : true;
@@ -57,163 +53,155 @@ export default function FindBankBranchInputSection() {
   };
 
   return (
-    <div className="FindBankBranchInputSection">
-      <div className="countainer">
-        <div className="filter-icon">
-          <FilterAltIcon sx={{ fontSize: "30px" }} />
-          <div className="title-counainer">
-            <Typography gutterBottom sx={{ color: "subtitle", fontSize: 20 }}>
+    <Box sx={{ padding: 2 }}>
+      <Box sx={{ maxWidth: 1700, margin: "0 auto", padding: 2 }}>
+        {/* Header */}
+
+        {/* Inputs Section with Border */}
+        <Box
+          sx={{
+            border: "1px solid #ccc",
+            borderRadius: 4,
+            padding: 3,
+            backgroundColor: "#f9f9f9",
+            marginBottom: 4,
+            
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
+            <FilterAltIcon sx={{ fontSize: 30 }} />
+            <Typography sx={{ fontSize: 20, color: "text.secondary" }}>
               Find Bank Branches
             </Typography>
-          </div>
-        </div>
+          </Box>
+          <Stack
+            direction="row"
+            spacing={2}
+            sx={{
+              flexWrap: "wrap",
+              justifyContent: "center",
+            }}
+          >
+            {/* Search Field */}
+            <TextField
+              variant="outlined"
+              placeholder="Search by branch name or address..."
+              size="small"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              sx={{
+                maxWidth: 350,
+                width: "100%",
+                backgroundColor: "#ebebebff",
+                borderRadius: 3,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 3,
+                },
+                "& .MuiInputBase-input::placeholder": {
+                  fontSize: "14px",
+                  color: "#888",
+                  opacity: 1,
+                },
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon size={16} style={{ color: "#888" }} />
+                  </InputAdornment>
+                ),
+              }}
+            />
 
-        <div className="inputs-countainer">
-          <div className="search-box">
-            <div
-              style={{
-                display: "flex",
-                gap: "20px",
-                borderRadius: "10px",
+            {/* City Dropdown */}
+            <Select
+              displayEmpty
+              size="small"
+              value={selectedCity}
+              onChange={(e) => setSelectedCity(e.target.value)}
+              sx={{
+                maxWidth: 350,
+                width: "100%",
+                backgroundColor: "#ebebebff",
+                borderRadius: 3,
+                "& .MuiSelect-select": {
+                  padding: "10px 14px",
+                  fontSize: "14px",
+                  color: "#555",
+                },
               }}
             >
-              {/* Search box */}
-              <TextField
-                variant="outlined"
-                placeholder="Search by branch name or address..."
-                size="small"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                sx={{
-                  width: 350,
-                  borderRadius: 3,
-                  padding: "1px",
-                  border: "none",
-                  backgroundColor: "#ebebebff",
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: 3,
-                  },
-                  "& .MuiInputBase-input::placeholder": {
-                    fontSize: "14px",
-                    color: "#888",
-                    opacity: 1,
-                  },
-                }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon size={16} style={{ color: "#888" }} />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-
-              {/* City dropdown */}
-              <Select
-                displayEmpty
-                size="small"
-                value={selectedCity}
-                onChange={(e) => setSelectedCity(e.target.value)}
-                sx={{
-                  width: 350,
-                  backgroundColor: "#ebebebff",
-                  borderRadius: 3,
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "rgba(0, 0, 0, 0.23)",
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "rgba(0, 0, 0, 0.87)",
-                  },
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#1976d2",
-                    borderWidth: "2px",
-                  },
-                  "& .MuiSelect-select": {
-                    padding: "10px 14px",
-                    fontSize: "14px",
-                    color: "#555",
-                  },
-                }}
-              >
-                <MenuItem value="">
-                  <em>All Cities</em>
+              <MenuItem value="">
+                <em>All Cities</em>
+              </MenuItem>
+              {cities.map((city) => (
+                <MenuItem key={city} value={city}>
+                  {city}
                 </MenuItem>
-                {cities.map((city) => (
-                  <MenuItem key={city} value={city}>
-                    {city}
-                  </MenuItem>
-                ))}
-              </Select>
+              ))}
+            </Select>
 
-              {/* Bank dropdown */}
-              <Select
-                displayEmpty
-                size="small"
-                value={selectedBank}
-                onChange={(e) => setSelectedBank(e.target.value)}
-                sx={{
-                  width: 350,
-                  backgroundColor: "#ebebebff",
-                  borderRadius: 3,
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "rgba(0, 0, 0, 0.23)",
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "rgba(0, 0, 0, 0.87)",
-                  },
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#1976d2",
-                    borderWidth: "2px",
-                  },
-                  "& .MuiSelect-select": {
-                    padding: "10px 14px",
-                    fontSize: "14px",
-                    color: "#555",
-                  },
-                }}
-              >
-                <MenuItem value="">
-                  <em>All Banks</em>
-                </MenuItem>
-                {banks.map((bank) => (
-                  <MenuItem key={bank} value={bank}>
-                    {bank}
-                  </MenuItem>
-                ))}
-              </Select>
-
-              {/* Clear filter button */}
-              <Button
-                variant="outlined"
-                onClick={clearFilters}
-                sx={{
-                  width: 350,
-                  height: "43px",
-                  borderRadius: 3,
-                  backgroundColor: "white",
-                  color: "#555",
-                  borderColor: "rgba(0, 0, 0, 0.23)",
-                  textTransform: "none",
+            {/* Bank Dropdown */}
+            <Select
+              displayEmpty
+              size="small"
+              value={selectedBank}
+              onChange={(e) => setSelectedBank(e.target.value)}
+              sx={{
+                maxWidth: 350,
+                width: "100%",
+                backgroundColor: "#ebebebff",
+                borderRadius: 3,
+                "& .MuiSelect-select": {
+                  padding: "10px 14px",
                   fontSize: "14px",
-                  fontWeight: 500,
-                  "&:hover": {
-                    borderColor: "rgba(0, 0, 0, 0.87)",
-                    backgroundColor: "#f5f5f5",
-                  },
-                }}
-              >
-                Clear Filter
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
+                  color: "#555",
+                },
+              }}
+            >
+              <MenuItem value="">
+                <em>All Banks</em>
+              </MenuItem>
+              {banks.map((bank) => (
+                <MenuItem key={bank} value={bank}>
+                  {bank}
+                </MenuItem>
+              ))}
+            </Select>
 
-      {/* Render the filtered branches */}
-      <div className="branches-list">
-        <BranchCard branches={filteredBranches} />
-        
-      </div>
-    </div>
+            {/* Clear Filter Button */}
+            <Button
+              variant="outlined"
+              onClick={clearFilters}
+              sx={{
+                maxWidth: 350,
+                width: "100%",
+                height: "43px",
+                borderRadius: 3,
+                backgroundColor: "white",
+                color: "#555",
+                textTransform: "none",
+                fontSize: "14px",
+                fontWeight: 500,
+                "&:hover": {
+                  backgroundColor: "#f5f5f5",
+                },
+              }}
+            >
+              Clear Filter
+            </Button>
+          </Stack>
+        </Box>
+
+        {/* Optional Branch Count */}
+        <Typography variant="h6" sx={{ mb: 2, textAlign: "center" }}>
+          {filteredBranches.length} Branches Found
+        </Typography>
+
+        {/* Branch List */}
+        <Box sx={{ mt: 2 }}>
+          <BranchCard branches={filteredBranches} />
+        </Box>
+      </Box>
+    </Box>
   );
 }
